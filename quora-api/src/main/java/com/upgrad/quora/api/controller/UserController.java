@@ -12,6 +12,7 @@ import com.upgrad.quora.service.exception.AuthenticationFailedException;
 import com.upgrad.quora.service.exception.SignOutRestrictedException;
 import com.upgrad.quora.service.exception.SignUpRestrictedException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -72,7 +73,7 @@ public class UserController {
     }
 
     @PostMapping(path = "user/signin", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<SigninResponse> signIn ( @RequestHeader(name = "authorization") final String authorization)
+    public ResponseEntity<SigninResponse> signIn(@RequestHeader(name = "authorization") final String authorization)
             throws AuthenticationFailedException {
         String[] stringArray = authorization.split("Basic ");
         byte[] array = Base64.getDecoder().decode(stringArray[1]);
@@ -89,8 +90,14 @@ public class UserController {
                 UserAuthEntity authEntity = new UserAuthEntity();
                 authEntity.setUuid(userWithUsername.getUUID());
                 authEntity.setUser(userWithUsername);
-                UserEntity userEntity = userService.saveLoginInfo(authEntity, password);
-                return new ResponseEntity<SigninResponse>(new SigninResponse().id(userEntity.getUUID()).message("SIGNED IN SUCCESSFULLY"), HttpStatus.OK);
+                UserAuthEntity userAuthEntity = userService.saveLoginInfo(authEntity, password);
+                UserEntity userEntity = userAuthEntity.getUser();
+
+
+                HttpHeaders headers = new HttpHeaders();
+                headers.add("access-token", "Bearer " + userAuthEntity.getAccessToken());
+
+                return new ResponseEntity<SigninResponse>(new SigninResponse().id(userEntity.getUUID()).message("SIGNED IN SUCCESSFULLY"), headers, HttpStatus.OK);
             } else {
                 throw new AuthenticationFailedException("ATH-002", "Password failed");
             }
@@ -100,7 +107,10 @@ public class UserController {
     @PostMapping(path = "user/signout", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<SignoutResponse> signOut(@RequestHeader(name = "authorization") final String authToken)
             throws SignOutRestrictedException {
-        UserEntity userEntity = authTokenService.checkAuthToken(authToken);
+        String[] stringArray = authToken.split("Bearer ");
+        String accessToken = stringArray[1];
+
+        UserEntity userEntity = authTokenService.checkAuthToken(accessToken);
         return new ResponseEntity<SignoutResponse>(new SignoutResponse().id(userEntity.getUUID()).message("SIGNED OUT SUCCESSFULLY"), HttpStatus.OK);
     }
 }
