@@ -4,14 +4,16 @@ import javax.persistence.*;
 import javax.validation.constraints.Size;
 import java.util.List;
 
-
 @Entity
 @Table(name = "USERS")
 @NamedQueries({@NamedQuery(name = "UserEmail", query = "SELECT u FROM UserEntity u WHERE u.email = :email"),
         @NamedQuery(name = "UserName", query = "SELECT u FROM UserEntity u WHERE u.userName = :username"),
         @NamedQuery(name = "UserId", query = "SELECT u FROM UserEntity u WHERE u.UUID = :uuid")
+
 })
 public class UserEntity {
+
+    // primary key
     @javax.persistence.Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -70,6 +72,7 @@ public class UserEntity {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private List<UserAuthEntity> authTokens;
+
 
     public UserEntity() {
 

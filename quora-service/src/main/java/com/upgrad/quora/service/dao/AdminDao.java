@@ -18,7 +18,8 @@ public class AdminDao {
             UserEntity userEntity = entityManager.createNamedQuery("UserId", UserEntity.class).setParameter("uuid", uuid).getSingleResult();
             entityManager.remove(userEntity);
             return userEntity;
-        } catch (NoResultException exc) {
+        }
+        catch (NoResultException exc) {
             return null;
         }
     }
