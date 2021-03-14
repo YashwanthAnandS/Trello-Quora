@@ -23,8 +23,7 @@ public class UserDao {
         try {
             return entityManager.createNamedQuery("UserName", UserEntity.class).
                     setParameter("username", username).getSingleResult();
-        }
-        catch (NoResultException exception) {
+        } catch (NoResultException exception) {
             return null;
         }
 
@@ -34,8 +33,7 @@ public class UserDao {
         try {
             return entityManager.createNamedQuery("UserEmail", UserEntity.class).
                     setParameter("email", email).getSingleResult();
-        }
-        catch (NoResultException exception) {
+        } catch (NoResultException exception) {
             return null;
         }
     }
