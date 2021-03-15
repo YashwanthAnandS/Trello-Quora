@@ -1,6 +1,5 @@
 package com.upgrad.quora.api.config;
 
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import springfox.documentation.builders.PathSelectors;
@@ -10,7 +9,7 @@ import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 /**
- * This Configuration integrates Swagger2 into the existing Spring Boot project.
+ * This Configuration integrates Swagger2 into the existing Spring Boot project..
  */
 @Configuration
 @EnableSwagger2
